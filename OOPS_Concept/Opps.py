@@ -1,0 +1,1 @@
+print("Today learn opps concept in python")
