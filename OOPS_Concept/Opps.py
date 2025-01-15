@@ -1,1 +1,5 @@
-print("Today learn opps concept in python")
+print("365 days challenge")
+# Polymorpphism
+# Encapsulation
+# Abstraction
+
