@@ -6,8 +6,13 @@ class Calculator:
         sum=0
         for i in args:
             sum+=i
-        return sum
+        return f'Addition={sum}'
     
 
 obj = Calculator()
+print(obj.add(10, 20))
+print(obj.add(10, 20, 30))
+print(obj.add(10, 20, 30, 40))
 print(obj.add(10, 20, 30, 40, 50))
+
+# pyhon does not support method overloading
