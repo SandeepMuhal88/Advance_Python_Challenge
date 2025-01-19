@@ -1,0 +1,1 @@
+print("detatils Explation")
