@@ -23,11 +23,27 @@ print(arr4)
 
 # user input a array
 print("User input a array")
-num=int(input("Enter size of array:"))
-l2=[]
-l1=[]
-for i in range(num):
-    l1.append(int(input(f"Enter number for index {i+1}:")))
-    l2.append(int(input(f"Enter number for index {i+1}:")))
-arr5=np.array([l1,l2])
-print(arr5)
+# num=int(input("Enter size of array:"))
+# l2=[]
+# l1=[]
+# for i in range(num):
+#     l1.append(int(input(f"Enter number for index {i+1}:")))
+#     l2.append(int(input(f"Enter number for index {i+1}:")))
+# arr5=np.array([l1,l2])
+# print(arr5)
+
+# useer input a 2d array
+print("User input a 2D array")
+row=int(input("Enter number of rows:"))
+col=int(input("Enter number of columns:"))
+l3=[]
+
+for i in range(row):
+    l1=[]
+    for j in range(col):
+        l1.append(int(input(f"Enter number of row{i+1} and coloumn{j+1}:")))
+    l3.append(l1)
+
+arr6=np.array(l3)
+
+print(arr6)
