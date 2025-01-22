@@ -90,13 +90,74 @@ Create a plot using Seaborn for its simplicity and aesthetics, and then use Matp
 
 ---
 
-### Further Learning
+### 1. Relational Plots
+These functions focus on visualizing relationships between two or more variables.
 
-Enter 1 of the corresponding numbers of this list of topics to expand your knowledge:
-1. Pandas Integration with Seaborn
-2. Advanced Customization in Matplotlib
-3. Statistical Analysis with Seaborn Plots
-4. Comparison of Seaborn and Plotly
-5. Interactive Visualizations with Matplotlib
+sns.relplot(): A general function for creating relational plots. It serves as an interface for scatterplot() and lineplot().`
+sns.scatterplot(): Creates a scatter plot to visualize the relationship between two variables.
+sns.lineplot(): Creates a line plot, useful for visualizing trends over time or across an interval.
+### 2. Categorical Plots
+These plots help visualize data where one variable is categorical.
+
+sns.catplot(): A general function for creating categorical plots.
+sns.stripplot(): Displays individual data points, often overlaid on box or violin plots.
+sns.swarmplot(): Similar to stripplot(), but adjusts points to avoid overlap.
+sns.boxplot(): Creates a box-and-whisker plot, useful for visualizing distributions and outliers.
+sns.violinplot(): Combines boxplot and kernel density estimation to show data distributions.
+sns.barplot(): Displays an aggregated measure (e.g., mean) with confidence intervals for categorical variables.
+sns.countplot(): Shows the count of observations in each category.
+sns.pointplot(): Displays point estimates and confidence intervals.
+### 3. Distribution Plots
+Used to visualize the distribution of a single variable or compare distributions.
+
+sns.histplot(): Plots histograms for univariate or bivariate distributions.
+sns.kdeplot(): Plots Kernel Density Estimation to visualize distributions.
+sns.ecdfplot(): Plots the Empirical Cumulative Distribution Function.
+sns.displot(): A general interface for distribution plots like histplot() and kdeplot().
+sns.rugplot(): Adds small vertical lines along the x-axis to show data density.
+### 4. Matrix and Heatmap Plots
+These plots are ideal for visualizing correlations or other matrix data.
+
+sns.heatmap(): Visualizes matrix data as a heatmap, often used for correlation matrices.
+sns.clustermap(): Creates a heatmap with hierarchical clustering.
+### 5. Regression and Statistical Plots
+Functions for regression modeling and visualizing statistical relationships.
+
+sns.lmplot(): Plots linear regression models. Supports facets for different subsets of data.
+sns.regplot(): Similar to lmplot(), but for a single subplot.
+sns.residplot(): Displays residuals from a regression, useful for diagnostic checks.
+### 6. Multivariate and Pairwise Plots
+Plots that explore relationships among multiple variables.
+
+sns.pairplot(): Creates pairwise plots for all variables in a dataset.
+sns.pairgrid(): Offers more customization for pairwise plots.
+sns.jointplot(): Plots the relationship between two variables with additional univariate distributions along axes.
+sns.JointGrid(): Provides a grid for customized joint and marginal plots.
+### 7. Facet and Multi-Plot Grids
+For creating complex visualizations with multiple subplots.
+
+sns.FacetGrid(): A powerful tool for plotting multiple subplots based on subsets of the data.
+sns.PairGrid(): A grid for plotting pairwise relationships.
+### 8. Style and Theme Control
+Methods to control the appearance of plots.
+
+sns.set_theme(): Sets the overall theme and aesthetics.
+sns.set(): A legacy function for theme control.
+sns.set_context(): Adjusts the scale of plot elements for different contexts (e.g., paper, talk).
+sns.set_style(): Changes the overall style (e.g., whitegrid, darkgrid).
+sns.despine(): Removes spines from the plot for a cleaner look.
+### 9. Color Palettes
+Functions for controlling plot colors.
+
+sns.color_palette(): Access and customize color palettes.
+sns.set_palette(): Sets the color palette for all plots.
+sns.cubehelix_palette(): Generates cubehelix palettes for better perceptual uniformity.
+sns.light_palette() and sns.dark_palette(): Create light or dark variations of a base color.
+### 10. Data Management and Utilities
+Functions for managing data and preprocessing.
+
+sns.load_dataset(): Loads example datasets included with Seaborn.
+sns.axes_style(): Returns a dictionary of the current style settings.
+sns.plotting_context(): Returns the plotting context setting
 
  

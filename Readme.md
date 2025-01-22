@@ -3,6 +3,7 @@
 ## NumPy
 NumPy is a fundamental package for scientific computing in Python. It provides support for arrays, matrices, and a large collection of mathematical functions to operate on these data structures. Key features include:
 - N-dimensional arrays
+
 - Mathematical functions for array operations
 - Linear algebra, Fourier transforms, and random number generation
 
