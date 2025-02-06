@@ -1,0 +1,1 @@
+#18. What is the difference between a shallow copy and a deep copy? Explain with example?

@@ -1,0 +1,1 @@
+#4. What are the types of functions in Python?

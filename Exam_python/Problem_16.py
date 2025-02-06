@@ -1,0 +1,1 @@
+#17. Explain the two methods used to delete a file from os using python, with example code.
