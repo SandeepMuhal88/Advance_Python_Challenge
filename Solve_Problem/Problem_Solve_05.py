@@ -7,4 +7,4 @@
 # •	is_armstrong(1634) should return True, because it has 4 digits, and 14+64+34+44=1+1296+81+256=1634.
 
 
-
+# def is_Armstrong_number(num):
