@@ -1,10 +1,20 @@
 # Calculate 0! to 5!
 
 def factorial(n):
-    if n==0:
-        return 1
+    fact=1
+    # if n==0:
+    #     return 1
+    # else:
+    #     return n*factorial(n-1)
+    if (n<0):
+        print("Not Defined")
+    elif(n==0):
+        print("That Factoriyal number is:-",n)
     else:
-        return n*factorial(n-1)
+        while(n !=1):
+            fact=fact*n
+            n-=1
+        print(fact)
 
 
-print(factorial(5))
+factorial(5)
