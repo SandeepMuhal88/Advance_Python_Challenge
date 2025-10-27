@@ -4,12 +4,13 @@
 
  
 
-# words = ['PYTHON', 'JOHN', 'chEEse', 'hAm', 'DOE', '123']
+words = ['PYTHON', 'JOHN', 'chEEse', 'hAm', 'DOE', '123']
+upper_case_words=[]
 
-# upper_case_words = [ ]
+for i in words:
+    if i.isupper():
+        upper_case_words.append(i)
 
-# for ____ in words:
+print(upper_case_words)
 
-#     if ____.isupper():
 
-#         ____.append(____)

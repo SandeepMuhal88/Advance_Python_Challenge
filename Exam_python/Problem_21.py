@@ -4,15 +4,15 @@
 
  
 
-# name = 'John Doe'
+name = 'John Doe'
 
-# if ____:
+if name:
 
-#     print('Name "{}" is more than 20 chars long'.format(name))
+    print('Name "{}" is more than 20 chars long'.format(name))
 
-#     length_description = 'long'
+    length_description = 'long'
 
-# elif ____:
+elif ____:
 
 #     print('Name "{}" is more than 15 chars long'.format(name))
 
