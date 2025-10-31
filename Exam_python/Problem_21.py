@@ -12,7 +12,7 @@ if name:
 
     length_description = 'long'
 
-elif ____:
+# elif :
 
 #     print('Name "{}" is more than 15 chars long'.format(name))
 
