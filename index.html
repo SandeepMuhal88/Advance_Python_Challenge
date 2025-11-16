@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deep Learning Optimizers</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            color: white;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #ff6b6b, #feca57, #48cae4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            padding: 8px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            gap: 5px;
+        }
+        
+        .nav-tab {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 8px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        
+        .nav-tab.active {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+        
+        .content {
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 35px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+        
+        .optimizer-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            border-left: 5px solid #feca57;
+            transition: all 0.3s ease;
+        }
+        
+        .optimizer-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .formula-box {
+            background: rgba(0,0,0,0.2);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow-x: auto;
+        }
+        
+        .algorithm-steps {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+        }
+        
+        .algorithm-steps ol {
+            padding-left: 20px;
+        }
+        
+        .algorithm-steps li {
+            margin: 8px 0;
+            padding: 5px 0;
+        }
+        
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .comparison-table th {
+            background: rgba(255,255,255,0.1);
+            font-weight: bold;
+        }
+        
+        .visualization {
+            background: rgba(0,0,0,0.2);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        canvas {
+            border-radius: 10px;
+            background: white;
+            max-width: 100%;
+        }
+        
+        .interactive-demo {
+            background: rgba(255,255,255,0.05);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+            align-items: center;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .control-group label {
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+        
+        input[type="range"] {
+            width: 120px;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.2);
+            outline: none;
+        }
+        
+        input[type="number"] {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-size: 14px;
+            width: 80px;
+        }
+        
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+        
+        .pros-cons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .pros, .cons {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 12px;
+        }
+        
+        .pros {
+            border-left: 4px solid #48cae4;
+        }
+        
+        .cons {
+            border-left: 4px solid #ff6b6b;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .practical-example {
+            background: rgba(255,255,255,0.08);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        
+        .highlight {
+            background: rgba(254, 202, 87, 0.2);
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .pros-cons {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 Deep Learning Optimizers</h1>
+            <p>Master the algorithms that make neural networks learn efficiently</p>
+        </div>
+        
+        <div class="nav-tabs">
+            <div class="nav-tab active" onclick="showTab('overview')">Overview</div>
+            <div class="nav-tab" onclick="showTab('sgd')">SGD</div>
+            <div class="nav-tab" onclick="showTab('momentum')">Momentum</div>
+            <div class="nav-tab" onclick="showTab('adagrad')">Adagrad</div> <div class="nav-tab" onclick="showTab('rmsprop')">RMSprop</div>
+            <div class="nav-tab" onclick="showTab('adam')">Adam</div>
+            <div class="nav-tab" onclick="showTab('adamw')">AdamW</div> <div class="nav-tab" onclick="showTab('comparison')">Comparison</div>
+            <div class="nav-tab" onclick="showTab('practical')">Practical Guide</div> </div>
+        
+        <div class="content">
+            <div id="overview" class="tab-content">
+                <h2>🎯 What are Optimizers?</h2>
+                <p>Optimizers are algorithms that adjust neural network parameters (weights and biases) to minimize the loss function. Think of them as different strategies for climbing down a mountain to reach the lowest point (global minimum).</p>
+                
+                <div class="optimizer-card">
+                    <h3>🔍 The Core Problem</h3>
+                    <p>Neural networks learn by finding the best values for millions of parameters. This is like finding the lowest point in a multi-dimensional landscape with:</p>
+                    <ul style="margin: 15px 0; padding-left: 20px;">
+                        <li><strong>High dimensions:</strong> Modern networks have millions of parameters</li>
+                        <li><strong>Complex terrain:</strong> Loss surfaces have many local minima and saddle points</li>
+                        <li><strong>Noisy gradients:</strong> Using mini-batches introduces noise</li>
+                        <li><strong>Time constraints:</strong> Training must be computationally efficient</li>
+                    </ul>
+                </div>
+                
+                <div class="visualization">
+                    <h3>📊 Loss Landscape Visualization</h3>
+                    <canvas id="lossLandscape" width="600" height="400"></canvas>
+                    <p style="margin-top: 10px;">Interactive visualization showing how different optimizers navigate the loss landscape</p>
+                    <div class="controls">
+                        <button onclick="alert('This requires a JavaScript visualization library!')">🎬 Animate Optimizers</button>
+                        <button onclick="alert('This requires a JavaScript visualization library!')">🔄 Reset</button>
+                    </div>
+                </div>
+                
+                <div class="algorithm-steps">
+                    <h3>⚙️ General Optimization Process</h3>
+                    <ol>
+                        <li><strong>Forward Pass:</strong> Compute predictions and loss</li>
+                        <li><strong>Backward Pass:</strong> Calculate gradients using backpropagation</li>
+                        <li><strong>Parameter Update:</strong> Adjust weights using optimizer algorithm</li>
+                        <li><strong>Repeat:</strong> Continue until convergence or max iterations</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div id="sgd" class="tab-content hidden">
+                <h2>📈 Stochastic Gradient Descent (SGD)</h2>
+                <p>The foundation of all optimization algorithms. SGD updates parameters in the direction opposite to the gradient.</p>
+                
+                <div class="formula-box">
+                    <strong>Algorithm:</strong><br><br>
+                    θ(t+1) = θ(t) - η * ∇J(θ)<br><br>
+                    Where:<br>
+                    • θ = parameters (weights)<br>
+                    • η = learning rate<br>
+                    • ∇J(θ) = gradient of loss function
+                </div>
+                
+                <div class="algorithm-steps">
+                    <h3>🔄 SGD Algorithm Steps</h3>
+                    <ol>
+                        <li>Calculate gradient: ∇J(θ) = ∂Loss/∂θ</li>
+                        <li>Update parameters: θ = θ - η * ∇J(θ)</li>
+                        <li>Repeat for each mini-batch</li>
+                    </ol>
+                </div>
+                
+                <div class="practical-example">
+                    <h3>💻 Python Implementation</h3>
+                    <div class="code-block">
+class SGD:
+    def __init__(self, learning_rate=0.01):
+        self.lr = learning_rate
+    
+    def update(self, params, gradients):
+        for param, grad in zip(params, gradients):
+            param -= self.lr * grad
+            
+# Usage in PyTorch
+optimizer = torch.optim.SGD(model.parameters(), lr=0.01)
+
+# Training loop
+for batch in dataloader:
+    optimizer.zero_grad()   # Clear gradients
+    loss = loss_function(model(batch.x), batch.y)
+    loss.backward()         # Compute gradients
+    optimizer.step()        # Update parameters</div>
+                </div>
+                
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>✅ Advantages</h4>
+                        <ul>
+                            <li>Simple and easy to understand</li>
+                            <li>Memory efficient</li>
+                            <li>Works well for convex problems</li>
+                            <li>Good for large datasets</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>❌ Disadvantages</h4>
+                        <ul>
+                            <li>Slow convergence</li>
+                            <li>Gets stuck in local minima</li>
+                            <li>Sensitive to learning rate</li>
+                            <li>Poor performance on noisy gradients</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="interactive-demo">
+                    <h3>🎮 Interactive SGD Demo</h3>
+                    <div class="controls">
+                        <div class="control-group">
+                            <label>Learning Rate: <span id="sgd-lr-value">0.01</span></label>
+                            <input type="range" id="sgd-lr" min="0.001" max="0.1" step="0.001" value="0.01" oninput="document.getElementById('sgd-lr-value').innerText = this.value">
+                        </div>
+                        <button onclick="alert('This requires a JavaScript visualization library!')">🚀 Run SGD</button>
+                    </div>
+                    <canvas id="sgdDemo" width="400" height="300"></canvas>
+                </div>
+            </div>
+            
+            <div id="momentum" class="tab-content hidden">
+                <h2>🏃‍♂️ Momentum Optimizer</h2>
+                <p>Momentum helps accelerate SGD in relevant directions and dampens oscillations. It's like rolling a ball down a hill - it builds up speed in consistent directions.</p>
+                
+                <div class="formula-box">
+                    <strong>Algorithm:</strong><br><br>
+                    v(t) = β * v(t-1) + η * ∇J(θ)<br>
+                    θ(t+1) = θ(t) - v(t)<br><br>
+                    Where:<br>
+                    • v = velocity (momentum term)<br>
+                    • β = momentum coefficient (usually 0.9)<br>
+                    • η = learning rate
+                </div>
+                
+                <div class="algorithm-steps">
+                    <h3>🔄 Momentum Algorithm Steps</h3>
+                    <ol>
+                        <li>Calculate current gradient: ∇J(θ)</li>
+                        <li>Update velocity: v = β * v_prev + η * ∇J(θ)</li>
+                        <li>Update parameters: θ = θ - v</li>
+                        <li>Store velocity for next iteration</li>
+                    </ol>
+                </div>
+                
+                <div class="practical-example">
+                    <h3>💻 Python Implementation</h3>
+                    <div class="code-block">
+class Momentum:
+    def __init__(self, learning_rate=0.01, momentum=0.9):
+        self.lr = learning_rate
+        self.momentum = momentum
+        self.velocity = {}
+    
+    def update(self, params, gradients):
+        for i, (param, grad) in enumerate(zip(params, gradients)):
+            if i not in self.velocity:
+                self.velocity[i] = torch.zeros_like(param)
+            
+            self.velocity[i] = self.momentum * self.velocity[i] + self.lr * grad
+            param -= self.velocity[i]
+
+# PyTorch usage
+optimizer = torch.optim.SGD(model.parameters(), 
+                            lr=0.01, momentum=0.9)</div>
+                </div>
+                
+                <div class="optimizer-card">
+                    <h3>🎯 Key Insight: Exponential Moving Average</h3>
+                    <p>Momentum maintains an exponentially decaying average of past gradients:</p>
+                    <div class="formula-box">
+                        v(t) = β*v(t-1) + η*g(t)<br>
+                        = η*g(t) + β*η*g(t-1) + β²*η*g(t-2) + ...
+                    </div>
+                    <p>This means recent gradients have more influence, but past gradients still contribute!</p>
+                </div>
+                
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>✅ Advantages</h4>
+                        <ul>
+                            <li>Faster convergence than SGD</li>
+                            <li>Reduces oscillations</li>
+                            <li>Better navigation through valleys</li>
+                            <li>Less sensitive to local minima</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>❌ Disadvantages</h4>
+                        <ul>
+                            <li>Additional hyperparameter (β)</li>
+                            <li>Can overshoot minimum</li>
+                            <li>More memory usage</li>
+                            <li>May not adapt to changing gradients</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="adagrad" class="tab-content hidden">
+                <h2>📉 Adagrad Optimizer</h2>
+                <p>Adaptive Gradient Algorithm (Adagrad) adapts the learning rate for each parameter, performing smaller updates for frequent parameters and larger updates for infrequent parameters.</p>
+                
+                <div class="formula-box">
+                    <strong>Algorithm:</strong><br><br>
+                    v(t) = v(t-1) + ∇J(θ)²<br>
+                    θ(t+1) = θ(t) - (η / (√v(t) + ε)) * ∇J(θ)<br><br>
+                    Where:<br>
+                    • v(t) = Sum of squared gradients up to time t<br>
+                    • η = Global learning rate<br>
+                    • ε = Small constant for numerical stability
+                </div>
+                
+                <div class="algorithm-steps">
+                    <h3>🔄 Adagrad Algorithm Steps</h3>
+                    <ol>
+                        <li>Calculate gradient: g(t) = ∇J(θ)</li>
+                        <li>Accumulate squared gradient: v(t) = v(t-1) + g(t)²</li>
+                        <li>Calculate adaptive learning rate: η_adapted = η / (√v(t) + ε)</li>
+                        <li>Update parameters: θ = θ - η_adapted * g(t)</li>
+                    </ol>
+                </div>
+                
+                <div class="practical-example">
+                    <h3>💻 Python Implementation</h3>
+                    <div class="code-block">
+# PyTorch usage
+optimizer = torch.optim.Adagrad(model.parameters(), lr=0.01)
+
+# Training loop
+for batch in dataloader:
+    optimizer.zero_grad()
+    loss = loss_function(model(batch.x), batch.y)
+    loss.backward()
+    optimizer.step()</div>
+                </div>
+
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>✅ Advantages</h4>
+                        <ul>
+                            <li>No need to manually tune the learning rate</li>
+                            <li>Excellent for sparse data (e.g., NLP)</li>
+                            <li>Adapts to parameter frequency</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>❌ Disadvantages</h4>
+                        <ul>
+                            <li>Learning rate monotonically decreases</li>
+                            <li>Can become extremely small, stopping learning</li>
+                            <li>Superseded by RMSprop and Adam</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="rmsprop" class="tab-content hidden">
+                <h2>📊 RMSprop Optimizer</h2>
+                <p>Root Mean Square Propagation adapts learning rates by dividing by the root mean square of recent gradients. It fixes Adagrad's diminishing learning rate problem.</p>
+                
+                <div class="formula-box">
+                    <strong>Algorithm:</strong><br><br>
+                    v(t) = β * v(t-1) + (1 - β) * ∇J(θ)²<br>
+                    θ(t+1) = θ(t) - (η / (√v(t) + ε)) * ∇J(θ)<br><br>
+                    Where:<br>
+                    • v = moving average of squared gradients<br>
+                    • β = decay rate (usually 0.9)<br>
+                    • ε = small constant for numerical stability
+                </div>
+                
+                <div class="algorithm-steps">
+                    <h3>🔄 RMSprop Algorithm Steps</h3>
+                    <ol>
+                        <li>Calculate gradient: g(t) = ∇J(θ)</li>
+                        <li>Update squared gradient average: v(t) = β*v(t-1) + (1-β)*g(t)²</li>
+                        <li>Calculate adaptive learning rate: η_adapted = η/√(v(t) + ε)</li>
+                        <li>Update parameters: θ = θ - η_adapted * g(t)</li>
+                    </ol>
+                </div>
+                
+                <div class="practical-example">
+                    <h3>💻 Python Implementation</h3>
+                    <div class="code-block">
+class RMSprop:
+    def __init__(self, learning_rate=0.01, beta=0.9, epsilon=1e-8):
+        self.lr = learning_rate
+        self.beta = beta
+        self.epsilon = epsilon
+        self.v = {}  # Moving average of squared gradients
+    
+    def update(self, params, gradients):
+        for i, (param, grad) in enumerate(zip(params, gradients)):
+            if i not in self.v:
+                self.v[i] = torch.zeros_like(param)
+            
+            # Update moving average of squared gradients
+            self.v[i] = self.beta * self.v[i] + (1 - self.beta) * grad**2
+            
+            # Update parameters with adaptive learning rate
+            param -= self.lr * grad / (torch.sqrt(self.v[i]) + self.epsilon)
+
+# PyTorch usage
+optimizer = torch.optim.RMSprop(model.parameters(), lr=0.01)</div>
+                </div>
+                
+                <div class="optimizer-card">
+                    <h3>🎯 RMSprop's Key Innovation</h3>
+                    <p>RMSprop solves the "diminishing learning rates" problem of Adagrad by using a moving average instead of accumulating all past squared gradients:</p>
+                    <div class="formula-box">
+                        Adagrad: v(t) = v(t-1) + g(t)²     ← keeps growing<br>
+                        RMSprop: v(t) = β*v(t-1) + (1-β)*g(t)²   ← bounded
+                    </div>
+                </div>
+                
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>✅ Advantages</h4>
+                        <ul>
+                            <li>Adaptive learning rates</li>
+                            <li>Good for non-convex optimization</li>
+                            <li>Handles sparse gradients well</li>
+                            <li>Doesn't accumulate gradients indefinitely</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>❌ Disadvantages</h4>
+                        <ul>
+                            <li>Can be aggressive in reducing learning rates</li>
+                            <li>No momentum component (in its basic form)</li>
+                            <li>Sensitive to initial learning rate</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="adam" class="tab-content hidden">
+                <h2>🧠 Adam Optimizer</h2>
+                <p>Adaptive Moment Estimation (Adam) combines the best of momentum (1st moment) and RMSprop (2nd moment). It's the most popular all-around optimizer.</p>
+                
+                <div class="formula-box">
+                    <strong>Algorithm:</strong><br><br>
+                    m(t) = β₁ * m(t-1) + (1 - β₁) * ∇J(θ)    // 1st moment<br>
+                    v(t) = β₂ * v(t-1) + (1 - β₂) * ∇J(θ)²    // 2nd moment<br><br>
+                    m̂(t) = m(t) / (1 - β₁ᵗ)               // Bias correction<br>
+                    v̂(t) = v(t) / (1 - β₂ᵗ)               // Bias correction<br><br>
+                    θ(t+1) = θ(t) - η * m̂(t) / (√v̂(t) + ε)
+                </div>
+                
+                <div class="algorithm-steps">
+                    <h3>🔄 Adam Algorithm Steps</h3>
+                    <ol>
+                        <li>Calculate gradient: g(t) = ∇J(θ)</li>
+                        <li>Update 1st moment (momentum): m(t) = β₁*m(t-1) + (1-β₁)*g(t)</li>
+                        <li>Update 2nd moment (variance): v(t) = β₂*v(t-1) + (1-β₂)*g(t)²</li>
+                        <li>Apply bias correction: m̂(t), v̂(t)</li>
+                        <li>Update parameters: θ = θ - η*m̂(t)/√(v̂(t)+ε)</li>
+                    </ol>
+                </div>
+                
+                <div class="practical-example">
+                    <h3>💻 Python Implementation</h3>
+                    <div class="code-block">
+class Adam:
+    def __init__(self, learning_rate=0.001, beta1=0.9, beta2=0.999, epsilon=1e-8):
+        self.lr = learning_rate
+        self.beta1 = beta1
+        self.beta2 = beta2
+        self.epsilon = epsilon
+        self.m = {}  # 1st moment
+        self.v = {}  # 2nd moment
+        self.t = 0   # time step
+    
+    def update(self, params, gradients):
+        self.t += 1
+        
+        for i, (param, grad) in enumerate(zip(params, gradients)):
+            if i not in self.m:
+                self.m[i] = torch.zeros_like(param)
+                self.v[i] = torch.zeros_like(param)
+            
+            # Update moments
+            self.m[i] = self.beta1 * self.m[i] + (1 - self.beta1) * grad
+            self.v[i] = self.beta2 * self.v[i] + (1 - self.beta2) * grad**2
+            
+            # Bias correction
+            m_hat = self.m[i] / (1 - self.beta1**self.t)
+            v_hat = self.v[i] / (1 - self.beta2**self.t)
+            
+            # Update parameters
+            param -= self.lr * m_hat / (torch.sqrt(v_hat) + self.epsilon)
+
+# PyTorch usage
+optimizer = torch.optim.Adam(model.parameters(), lr=0.001)</div>
+                </div>
+                
+                <div class="optimizer-card">
+                    <h3>🔬 Adam's Magic: Adaptive Learning Rates</h3>
+                    <p>Adam automatically adjusts learning rates for each parameter:</p>
+                    <ul style="margin: 10px 0; padding-left: 20px;">
+                        <li><strong>Large gradients:</strong> Learning rate decreases (√v̂ is large)</li>
+                        <li><strong>Small gradients:</strong> Learning rate stays higher</li>
+                        <li><strong>Consistent direction:</strong> Momentum accelerates (m̂ builds up)</li>
+                        <li><strong>Noisy gradients:</strong> Momentum dampens oscillations</li>
+                    </ul>
+                </div>
+                
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>✅ Advantages</h4>
+                        <ul>
+                            <li>Adaptive learning rates per parameter</li>
+                            <li>Fast convergence</li>
+                            <li>Robust to noisy gradients</li>
+                            <li>Works well with sparse gradients</li>
+                            <li>Good default hyperparameters</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>❌ Disadvantages</h4>
+                        <ul>
+                            <li>Higher memory usage (stores m and v)</li>
+                            <li>Can generalize poorly in some cases</li>
+                            <li>Suffers from issues with L2 regularization</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="adamw" class="tab-content hidden">
+                <h2>✨ AdamW Optimizer</h2>
+                <p>Adam with Weight Decay (AdamW) fixes a critical flaw in how Adam handles L2 Regularization (weight decay). It decouples the weight decay from the gradient update.</p>
+                
+                <div class="optimizer-card">
+                    <h3>🎯 The Problem with Adam and L2 Regularization</h3>
+                    <p>In standard L2 regularization, the loss function is $L_{reg} = L_{original} + \lambda W^2$. The gradient becomes $\nabla L_{reg} = \nabla L_{original} + 2\lambda W$.</p>
+                    <p>In Adam, this gradient is normalized by the $v(t)$ term: $\nabla L_{reg} / \sqrt{v(t)}$. This means the effect of weight decay ($\lambda W$) is *also* adapted, shrinking for parameters with large gradients. This is not the desired behavior. We want weight decay to be a fixed, predictable reduction of all weights.</p>
+                </div>
+
+                <div class="formula-box">
+                    <strong>Algorithm (Simplified):</strong><br><br>
+                    // 1. Calculate gradients, moments, and bias correction
+                    //    (Same as Adam: m̂(t), v̂(t))
+                    
+                    // 2. Perform Adam step *without* weight decay
+                    Adam_update = η * m̂(t) / (√v̂(t) + ε)
+                    
+                    // 3. Apply decoupled weight decay *directly* to weights
+                    θ(t+1) = θ(t) - Adam_update - (η * λ * θ(t))<br><br>
+                    Where:
+                    • λ = weight decay coefficient
+                </div>
+                
+                <div class="practical-example">
+                    <h3>💻 Python Implementation</h3>
+                    <div class="code-block">
+# PyTorch usage
+# Note: 'weight_decay' is a separate parameter, not part of the loss
+optimizer = torch.optim.AdamW(model.parameters(), 
+                             lr=0.001, 
+                             weight_decay=0.01)
+
+# Training loop
+for batch in dataloader:
+    optimizer.zero_grad()
+    loss = loss_function(model(batch.x), batch.y)
+    loss.backward()
+    optimizer.step()</div>
+                </div>
+
+                <div class="pros-cons">
+                    <div class="pros">
+                        <h4>✅ Advantages</h4>
+                        <ul>
+                            <li>Correctly implements weight decay</li>
+                            <li>Leads to much better generalization</li>
+                            <li>More stable training</li>
+                            <li>The modern standard for Transformer models</li>
+                        </ul>
+                    </div>
+                    <div class="cons">
+                        <h4>❌ Disadvantages</h4>
+                        <ul>
+                            <li>Same memory overhead as Adam</li>
+                            <li>Adds another hyperparameter (weight_decay)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div id="comparison" class="tab-content hidden">
+                <h2>⚖️ Optimizer Comparison</h2>
+                
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Optimizer</th>
+                            <th>Adaptive LR?</th>
+                            <th>Memory</th>
+                            <th>Convergence</th>
+                            <th>Best For</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>SGD</strong></td>
+                            <td>No</td>
+                            <td>Low</td>
+                            <td>Slow</td>
+                            <td>Simple problems, fine-tuning for max generalization</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Momentum</strong></td>
+                            <td>No</td>
+                            <td>Medium</td>
+                            <td>Fast</td>
+                            <td>Computer vision, established architectures</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Adagrad</strong></td>
+                            <td>Yes</td>
+                            <td>Medium</td>
+                            <td>Fast (then stops)</td>
+                            <td>Sparse data (NLP)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>RMSprop</strong></td>
+                            <td>Yes</td>
+                            <td>Medium</td>
+                            <td>Fast</td>
+                            <td>RNNs, non-convex problems</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Adam</strong></td>
+                            <td>Yes</td>
+                            <td>High</td>
+                            <td>Very Fast</td>
+                            <td>General purpose, quick prototyping, NLP</td>
+                        </tr>
+                        <tr>
+                            <td><strong>AdamW</strong></td>
+                            <td>Yes</td>
+                            <td>High</td>
+                            <td>Very Fast</td>
+                            <td>Modern default, Transformers, Vision, any task with L2</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="visualization">
+                    <h3>📈 Performance Comparison (Illustrative)</h3>
+                    
+                    <p style="margin-top:10px;">A typical visualization showing Adam/RMSprop converging fastest, while SGD+Momentum may find a better (wider) minimum.</p>
+                </div>
+            </div>
+            
+            <div id="practical" class="tab-content hidden">
+                <h2>💡 Practical Guide & Best Practices</h2>
+                <p>Choosing an optimizer is a critical step. Here are some simple rules of thumb for getting started.</p>
+                
+                <div class="optimizer-card">
+                    <h3>🏆 Rule 1: Start with Adam or AdamW</h3>
+                    <p>For most problems, <span class="highlight">Adam</span> or <span class="highlight">AdamW</span> is the best default choice. They converge quickly and are robust to hyperparameter settings.</p>
+                    <ul style="margin: 15px 0; padding-left: 20px;">
+                        <li>Use **AdamW** if you are using L2 regularization (weight decay), which is almost always.</li>
+                        <li>A good starting learning rate is <span class="highlight">1e-3</span> or <span class="highlight">3e-4</span>.</li>
+                        <li>The default betas ($\beta_1=0.9, \beta_2=0.999$) almost never need to be changed.</li>
+                    </ul>
+                </div>
+
+                <div class="optimizer-card" style="border-left-color: #48cae4;">
+                    <h3>🥈 Rule 2: Use SGD+Momentum for Best Results (If You Have Time)</h3>
+                    <p>While Adam converges faster, it can sometimes find "sharper" minima, which may generalize poorly. <span class="highlight">SGD with Momentum</span> often finds "wider" minima, leading to better final test accuracy.</p>
+                    <ul style="margin: 15px 0; padding-left: 20px;">
+                        <li>This is common in computer vision (e.g., training ResNets).</li>
+                        <li>It requires **careful tuning** of the learning rate and momentum (e.g., $\beta=0.9$).</li>
+                        <li>It *almost always* requires a **Learning Rate Scheduler** to work well.</li>
+                    </ul>
+                </div>
+
+                <div class="optimizer-card" style="border-left-color: #ff6b6b;">
+                    <h3>⚙️ Rule 3: Don't Forget Learning Rate Schedulers!</h3>
+                    <p>The optimizer is only half the story. A **Learning Rate Scheduler** dynamically adjusts the learning rate (η) *during* training. This is crucial for achieving state-of-the-art results.</p>
+                    
+                    <h4>Common Schedulers:</h4>
+                    <ul style="margin: 15px 0; padding-left: 20px;">
+                        <li><strong>Step Decay:</strong> Reduce LR by 10x at specific epochs (e.g., at epoch 30 and 60). Good for SGD.</li>
+                        <li><strong>Cosine Annealing:</strong> Smoothly decrease the LR from its max value to 0, following a cosine curve. Very effective and popular.</li>
+                        <li><strong>Warmup:</strong> Start with a very small LR, linearly increase it for the first few epochs (the "warmup"), then let the scheduler take over. This prevents early instability.</li>
+                    </ul>
+                    <div class="code-block">
+# PyTorch example: AdamW + Cosine Annealing with Warmup
+
+optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3, weight_decay=0.01)
+
+# Example: 100 total epochs, 10 warmup epochs
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(
+    optimizer, 
+    T_max=100 - 10 # Total steps - warmup steps
+)
+# (A real implementation would also handle the warmup phase)
+</div>
+                </div>
+
+            </div>
+            
+            </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // 1. Get all tab content elements and hide them
+            let tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.add('hidden');
+            }
+
+            // 2. Get all tab button elements and remove the 'active' class
+            let navTabs = document.getElementsByClassName('nav-tab');
+            for (let i = 0; i < navTabs.length; i++) {
+                navTabs[i].classList.remove('active');
+            }
+
+            // 3. Show the specific tab content
+            document.getElementById(tabName).classList.remove('hidden');
+
+            // 4. Find the button that controls this tab and add 'active' class
+            // This is a bit more complex since the button and tab don't have a direct link
+            // We'll find the button whose onclick matches the tabName
+            for (let i = 0; i < navTabs.length; i++) {
+                if (navTabs[i].getAttribute('onclick') === `showTab('${tabName}')`) {
+                    navTabs[i].classList.add('active');
+                    break;
+                }
+            }
+        }
+
+        // Ensure the default tab ('overview') is shown on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            showTab('overview');
+        });
+    </script>
+    </body>
+</html>
