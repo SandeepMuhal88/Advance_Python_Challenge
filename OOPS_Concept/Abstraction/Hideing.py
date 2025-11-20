@@ -6,7 +6,7 @@ class Shape(ABC):
         pass
 
     @abstractmethod
-    def perimeter(self):
+    def parameter(self):
         pass
 
 class Circle(Shape):
@@ -16,20 +16,26 @@ class Circle(Shape):
     def area(self):
         return 3.14 * self.radius ** 2
 
-    def perimeter(self):
+    def parameter(self):
         return 2 * 3.14 * self.radius
 
 class ColoredShape(Shape):
     def __init__(self, color):
         self.color = color
-
+    
+    def area(self):
+        return "Colored Shape"
+    
+    def parameter(self):
+        return "Colored Shape"
+    
     def get_color(self):
         return self.color
 
 obj1=Circle(5)
 obj2=ColoredShape("Red")
 print(obj1.area())
-print(obj1.perimeter())
+print(obj1.parameter())
 print(obj2.get_color())
-print("Area:", circle.area())
-print("Perimeter:", circle.perimeter())
+print("Area:", obj1.area())
+print("Parameter:", obj1.parameter())
