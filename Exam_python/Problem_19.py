@@ -16,7 +16,12 @@
 
 # 'Your impelementation'
 
-# my_dict =
-
-
-# special_value =
+my_dict = {}
+dict1 = dict(key1='This is not that hard', key2='Python is still cool')
+dict2 = {'key1': 123, 'special_key': 'secret'}
+dict3 = dict([('key2', 456), ('keyX', 'X')])
+my_dict.update(dict1)
+my_dict.update(dict2)
+my_dict.update(dict3)
+special_value = my_dict.pop('special_key')
+print(my_dict)
